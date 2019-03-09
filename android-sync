@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+dir_src=/run/user/$UID/gvfs/mtp*
+dir_dest=$(pwd)
+cd $dir_src
+if [[ -d ./Phone ]]; then
+  echo "[INFO] Phone mounted."
+else
+  echo "[ERROR] Phone not mounted. Exiting now."
+  exit
+fi
+cmd="rsync -av --exclude='cache' $dir_src/ $dir_dest/data"
+echo '[INFO] Syncing starts...'
+echo "[CMD] $cmd"
+$cmd
