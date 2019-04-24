@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
+
+# R-syncs files inside an android phone with existing direcroy.
+# Currently, it takes two arguments, first Phone/Card and 2nd the directory to sync. e.g. DCIM, Movies, etc.
+
+
 dir_src=/run/user/$UID/gvfs/mtp*
 dir_dest=$(pwd)
+
+phone_or_card=$1 # Can be 'Phone', 'Card', or '*'
+dir_to_sync=$2 # Can be 'DCIM', 'Movies', or '*'
+
 cd $dir_src
 if [[ -d ./Phone ]]; then
   echo "[INFO] Phone mounted."
@@ -8,7 +17,16 @@ else
   echo "[ERROR] Phone not mounted. Exiting now."
   exit
 fi
-cmd="rsync -av --exclude='cache' $dir_src/ $dir_dest/data"
-echo '[INFO] Syncing starts...'
+
+path_to_sync=$phone_or_card/$dir_to_sync
+cmd="rsync -av $dir_src/$path_to_sync/ $dir_dest/$path_to_sync"
+
 echo "[CMD] $cmd"
-$cmd
+read -p 'Run? y/n ' run
+if [[ $run == "y" ]]; then
+  echo "Running..."
+  $cmd
+else
+  echo "Cancled."
+fi
+
