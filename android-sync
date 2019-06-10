@@ -1,32 +1,32 @@
 #!/usr/bin/env bash
 
-# R-syncs files inside an android phone with existing direcroy.
-# Currently, it takes two arguments, first Phone/Card and 2nd the directory to sync. e.g. DCIM, Movies, etc.
+set -e
 
+# R-syncs files inside an android phone with existing direcroy.
+# It takes one argument, the path to sync. This command is supposed to be run from within the sync directory
+
+# @TODO accept 2nd argument for the destination
 
 dir_src=/run/user/$UID/gvfs/mtp*
 dir_dest=$(pwd)
 
-phone_or_card=$1 # Can be 'Phone', 'Card', or '*'
-dir_to_sync=$2 # Can be 'DCIM', 'Movies', or '*'
+path_to_sync=$1
+
+# Default to "."
+path_to_sync=${path_to_sync:-.}
+
+# Remove trailing slash
+path_to_sync=${path_to_sync%/}
+
+cmd="rsync -av $dir_src/$path_to_sync/ $path_to_sync -n"
 
 cd $dir_src
-if [[ -d ./Phone ]]; then
-  echo "[INFO] Phone mounted."
-else
-  echo "[ERROR] Phone not mounted. Exiting now."
-  exit
-fi
-
-path_to_sync=$phone_or_card/$dir_to_sync
-cmd="rsync -av $dir_src/$path_to_sync/ $dir_dest/$path_to_sync"
+[ ! -d "Phone" ] && echo "[ERROR] Phone not mounted. Exiting now." && exit
 
 echo "[CMD] $cmd"
 read -p 'Run? y/n ' run
-if [[ $run == "y" ]]; then
-  echo "Running..."
-  $cmd
-else
-  echo "Cancled."
-fi
+
+[ $run != "y" ] && echo "Cancled." && exit
+
+$cmd
 
