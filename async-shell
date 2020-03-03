@@ -1,0 +1,8 @@
+run() {
+  local path=$(potato_run_task 'path')
+  echo "Opening a shell in $path"
+  init_file=$(mktemp -t XXXX)
+  echo 'PS1="async> \$(pwd)$ "' >> $init_file
+  echo "cd $path" >> $init_file
+  exec bash --init-file $init_file
+}

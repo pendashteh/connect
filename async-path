@@ -1,0 +1,3 @@
+run() {
+  echo /run/user/$UID/gvfs/mtp*
+}
