@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+run() {
+  local inner_path=${1:-''}
+  test -z $inner_path && echo 'Please choose a path in either Phone/ or Card/' && return
+
+  local src=$(potato_run_task 'path')
+  local dest=$HOME/.async/data
+  mkdir -p $dest
+  local src_fullpath=$src/$inner_path
+  local dest_fullpath=$dest/${inner_path%/}
+  local cmd="rsync -av $src_fullpath $dest_fullpath"
+  echo $cmd
+  read -p 'Are you sure? [Y/n] ' -n 1
+  echo ''
+  case "$REPLY" in
+  y|Y) $cmd
+    ;;
+  *) echo 'Cancled.'
+    ;;
+  esac
+}
