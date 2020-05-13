@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+
+run() {
+  # Expose the path to the sub-shell
+  export ASYNC_SRC=$(potato_run_task 'path')
+  echo "Opening a shell in $path"
+  init_file=$(mktemp -t XXXX)
+  declare -f app_shell_init >> $init_file
+  echo 'app_shell_init' >> $init_file
+  echo 'loaded init file: '$init_file
+  exec bash --init-file $init_file
+}
+
+function app_shell_init {
+  export ASYNC_SHELL=1
+  export PS1="async> "
+  cd $ASYNC_SRC
+  echo 'Welcome to ASYNC Shell!'
+  echo 'Available variables:'
+  declare -p ASYNC_SRC
+  echo ''
+}
