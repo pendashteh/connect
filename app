@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-[ -e $POTATO_CORE ] && . $POTATO_CORE
+set -e
 
-potato_load_app
+test -e $POTATO_CORE && . $POTATO_CORE --exec || echo 'Go get potato first.'
 
-_try potato_exec "${@}"
-_catch E && {
-  echo '[ERROR] '$E
-}
