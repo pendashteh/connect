@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+datadir__=${datadir__:-$HOME/.undies/connect}
+
+__puton__ () {
+  mkdir -p $datadir__
+}
+
+path__ () {
+  echo /run/user/$UID/gvfs/mtp*
+}
+
+sync__ () {
+  local inner_path=${1:-''}
+  test -z $inner_path && echo 'Please choose a path in either Phone/ or Card/' && return
+
+  local src=$(path__)
+  local src_fullpath=$src/$inner_path
+  local dest_fullpath=$datadir__/${inner_path%/}
+  __exec rsync -av $src_fullpath $dest_fullpath
+}
+
+shell__ () {
+  # Expose the path to the sub-shell
+  export CONNECT_SRC=$(path__)
+  init_file=$(mktemp -t XXXX)
+  declare -f __shell_init | head -n -1 | tail -n +3 >> $init_file
+  exec bash --init-file $init_file
+}
+
+function __shell_init {
+  export PS1="connect> "
+  cd $CONNECT_SRC
+  echo 'Welcome to CONNECT Shell!'
+  echo 'Available variables:'
+  declare -p | grep CONNECT_
+  echo ''
+}
+
+. undies
