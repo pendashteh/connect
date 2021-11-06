@@ -17,7 +17,7 @@ sync__ () {
   local src=$(path__)
   local src_fullpath=$src/$inner_path
   local dest_fullpath=$datadir__/${inner_path%/}
-  __exec rsync -av $src_fullpath $dest_fullpath
+  __exec rsync -av "$src_fullpath" "$dest_fullpath"
 }
 
 shell__ () {
